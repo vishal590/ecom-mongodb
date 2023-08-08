@@ -50,7 +50,7 @@ const Header = () => {
                         {auth?.user?.name}
                       </NavLink>
                       <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><NavLink className="dropdown-item" to="/dashboard">Dashboard</NavLink></li>
+                        <li><NavLink className="dropdown-item" to={`/dashboard/${auth?.user?.role === 1 ? 'admin' : 'user'}`}>Dashboard</NavLink></li>
                         <li><NavLink className="dropdown-item" onClick={handleLogout} to="/login">Log Out</NavLink>
                         </li>
                       </ul>
