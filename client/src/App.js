@@ -30,12 +30,12 @@ function App() {
           <Route path='user/profile' element={<Profile/>} />
 
         </Route>
-        {/* <Route path='/dashboard' element={<AdminRoute/>} > */}
-          <Route path='/dashboard/admin' element={<AdminDashboard/>} />
-          <Route path='/dashboard/admin/create-category' element={<CreateCategory/>} />
-          <Route path='/dashboard/admin/create-product' element={<CreateProduct/>} />
-          <Route path='/dashboard/admin/users' element={<Users/>} />
-        {/* </Route> */}
+        <Route path='/dashboard' element={<AdminRoute/>} >
+          <Route path='admin' element={<AdminDashboard/>} />
+          <Route path='admin/create-category' element={<CreateCategory/>} />
+          <Route path='admin/create-product' element={<CreateProduct/>} />
+          <Route path='admin/users' element={<Users/>} />
+        </Route>
         <Route path='/login' element={<Login />} />
         <Route path='/about' element={<About/>} />
         <Route path='/contact' element={<Contact/>} />
