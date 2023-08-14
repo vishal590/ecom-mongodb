@@ -54,7 +54,7 @@ export const updateCategoryController = async(req, res) => {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: 'Failed to update the category - 500'.red,
+            message: `Failed to update the category - 500`.red,
         })
     }
 }
