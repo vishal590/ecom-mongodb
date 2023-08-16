@@ -38,8 +38,8 @@ const CreateCategory = () => {
   const getAllCategory = async () => {
     try {
       const { data } = await axios.get("/api/v1/category/get-category");
-      if (data.success) {
-        setCategories(data.category);
+      if (data?.success) {
+        setCategories(data?.category);
       }
     } catch (error) {
       console.log(error);
@@ -55,18 +55,34 @@ const CreateCategory = () => {
     e.preventDefault();
     try {
       const { data } = await axios.put(
-        `/api/v1/category/update-category/${selected._id}`,
+        `/api/v1/category/update-category/${selected}`,
         {
           name: updatedName,
         }
       );
-      console.log(data)
       if(data.success){
         toast.success(data.message);
         console.log(data.message);
         setSelected(null);
         setUpdatedName('');
         setVisible(false);
+        getAllCategory();
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went Wrong");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const { data } = await axios.delete(
+        `/api/v1/category/delete-category/${id}`,
+      );
+      console.log(data)
+      if(data.success){
+        toast.success(data.message);
+        console.log(data.message);
         getAllCategory();
       }
     } catch (error) {
@@ -115,7 +131,7 @@ const CreateCategory = () => {
                           >
                             Edit
                           </button>
-                          <button className="btn btn-danger ms-2">
+                          <button className="btn btn-danger ms-2" onClick={()=> {handleDelete(c._id)}}>
                             Delete
                           </button>
                         </td>

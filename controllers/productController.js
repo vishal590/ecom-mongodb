@@ -8,6 +8,9 @@ export const createProductController = async (req, res) => {
     const { name, slug, description, price, category, quantity, shipping } =
       req.fields;
 
+      // if we use express-formidable, then we have to use req.fields
+      
+
     const { photo } = req.files;
 
     // validation
