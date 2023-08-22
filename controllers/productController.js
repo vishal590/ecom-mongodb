@@ -1,15 +1,14 @@
 import slugify from "slugify";
 import productModel from "../models/productModel.js";
 import fs from "fs";
-import colors from "colors";
+import colors, { bgRed } from "colors";
 
 export const createProductController = async (req, res) => {
   try {
     const { name, slug, description, price, category, quantity, shipping } =
       req.fields;
 
-      // if we use express-formidable, then we have to use req.fields
-      
+    // if we use express-formidable, then we have to use req.fields
 
     const { photo } = req.files;
 
@@ -186,8 +185,7 @@ export const updateProductController = async (req, res) => {
       success: true,
       message: `Product updated successfully`.green,
       products,
-    })
-
+    });
   } catch (error) {
     console.log(`${error}`.red);
     res.status(500).send({
@@ -197,3 +195,91 @@ export const updateProductController = async (req, res) => {
     });
   }
 };
+
+// filters
+export const productFiltersController = async (req, res) => {
+  try {
+    const { checked, radio } = req.body;
+    let args = {};
+    if (checked.length > 0) args.category = checked;
+    if (radio.length) args.price = { $gte: radio[0], $lte: radio[1] };
+    const products = await productModel.find(args);
+    res.status(200).send({
+      success: true,
+      message: `price and category fetch successully`.bgGreen,
+      products,
+    });
+  } catch (error) {
+    console.log(`Error: ${error}`.bgRed);
+    res.status(400).send({
+      success: false,
+      message: `Internal Server Error (productFilterController)`.bgRed,
+      error,
+    });
+  }
+};
+
+export const productCountController = async (req, res) => {
+  try {
+    const total = await productModel.find({}).estimatedDocumentCount();
+    res.status(200).send({
+      success: true,
+      message: `Data count fetch successully`.green,
+      total,
+    });
+  } catch (error) {
+    console.log(`Error: ${error}`.bgRed);
+    res.status(400).send({
+      success: false,
+      message: `Bad Request (Error in product Count)`.bgRed,
+      error,
+    });
+  }
+};
+
+// product list base on page
+export const productListController = async (req, res) => {
+  try {
+    const perPage = 2;
+    const page = req.params.page ? req.params.page : 1;
+    const products = await productModel
+      .find({})
+      .select("-photo")
+      .skip((page - 1) * perPage)
+      .limit(perPage)
+      .sort({ createdAt: -1 });
+      res.status(200).send({
+        success: true,
+        products,
+      })
+  } catch (error) {
+    console.log(`Error: ${error}`.bgRed);
+    res.status(400).send({
+      success: false,
+      message: `Bad request (Failed to Fetch product per page)`.bgRed,
+      error,
+    });
+  }
+};
+
+// Search Product Controller
+export const searchProductController = async(req, res) => {
+  try{
+    const {keyword} = req.params;
+    const resultls = await productModel.find({
+      $or: [
+        {name: {$regex: keyword, $options: 'i'}},
+        {description: {$regex: keyword, $options: 'i'}},
+      ]
+    }).select('-photo');
+    res.json(resultls)
+
+  }catch(error){
+    console.log(`Error: ${error}`.bgRed);
+    res.status(400).send({
+      success: false,
+      message: `Bad Request (searchProductController)`.bgRed,
+      error,
+    })
+  }
+}
