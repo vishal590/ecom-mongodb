@@ -1,7 +1,7 @@
 import slugify from "slugify";
 import productModel from "../models/productModel.js";
 import fs from "fs";
-import colors, { bgRed } from "colors";
+import colors from "colors";
 
 export const createProductController = async (req, res) => {
   try {
@@ -279,6 +279,30 @@ export const searchProductController = async(req, res) => {
     res.status(400).send({
       success: false,
       message: `Bad Request (searchProductController)`.bgRed,
+      error,
+    })
+  }
+}
+
+export const relatedProductController = async (req, res) => {
+  try{
+    const {pid, cid} = req.params;
+    const product = await productModel.find({
+      category: cid,
+      _id: {$ne: pid}
+    }).select('-photo').limit(3).populate('category');
+    
+    res.status(200).send({
+      success: true,
+      message: `Related product Fetch Successfully`.bgGreen,
+      product,
+    })
+
+  }catch(error){
+    console.log(`Error: ${error}`.bgRed);
+    res.status(400).send({
+      success: false,
+      message: `Bad Request (400) (relatedProductController)`.bgRed,
       error,
     })
   }
