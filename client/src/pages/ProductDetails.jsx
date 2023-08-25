@@ -8,7 +8,6 @@ const ProductDetails = () => {
     const params = useParams();
     const [product, setProduct] = useState({});
     const [relatedProduct, setRelatedProduct] = useState([]);
-    const navigate = useNavigate();
 
     useEffect(() => {
         if(params.slug) getProduct()
@@ -33,7 +32,7 @@ const ProductDetails = () => {
     // get similar product 
     const getSimilarProduct = async (pid, cid) => {
         try{
-            const {data} = await axios.get(`api/v1/product/related-product/${pid}/${cid}`);
+            const {data} = await axios.get(`/api/v1/product/related-product/${pid}/${cid}`);
             if(data?.success){
                 setRelatedProduct(data?.product);
             }else{
@@ -58,7 +57,8 @@ const ProductDetails = () => {
             </div>
         </div>
         <div className="row">
-            <h2>Similar Product</h2>
+            <h4>Similar Product</h4>
+            {relatedProduct.length < 1 && (<p className='text-danger text-center'>No Similar Product Found</p>)}
             <div className="d-flex flex-wrap ">
             {relatedProduct?.map((p) => (
               <Link

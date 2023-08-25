@@ -1,5 +1,6 @@
 import slugify from "slugify";
 import productModel from "../models/productModel.js";
+import categoryModel from '../models/categoryModel.js';
 import fs from "fs";
 import colors from "colors";
 
@@ -303,6 +304,29 @@ export const relatedProductController = async (req, res) => {
     res.status(400).send({
       success: false,
       message: `Bad Request (400) (relatedProductController)`.bgRed,
+      error,
+    })
+  }
+}
+
+// get product by category
+export const productCategoryController = async(req, res) => {
+  try{
+    const category = await categoryModel.findOne({slug: req.params.slug})
+    const products = await productModel.find({category}).populate('category');
+
+    res.status(200).send({
+      success: true,
+      message: `Category fetch successully`.bgGreen,
+      category,
+      products,
+    })
+
+  }catch(error){
+    console.log(`Error: ${error}`.bgRed);
+    res.status(400).send({
+      success: false,
+      message: `Bad Request (productCategoryController)`.bgRed,
       error,
     })
   }
