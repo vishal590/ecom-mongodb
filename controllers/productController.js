@@ -3,6 +3,8 @@ import productModel from "../models/productModel.js";
 import categoryModel from '../models/categoryModel.js';
 import fs from "fs";
 import colors from "colors";
+import userModel from "../models/userModel.js";
+import { hashPassword } from "../helpers/authHelper.js";
 
 export const createProductController = async (req, res) => {
   try {
@@ -327,6 +329,41 @@ export const productCategoryController = async(req, res) => {
     res.status(400).send({
       success: false,
       message: `Bad Request (productCategoryController)`.bgRed,
+      error,
+    })
+  }
+}
+
+export const updateProfileController = async(req, res) => {
+  try{
+    const {name, email, password, address, phone} = req.body;
+    const user = await userModel.findById(req.user._id)
+    // password
+    if(password && password.length < 6){
+      return res.json({error: 'password is required and 6 characters long'})
+    }
+
+    const hashPassword = password ? await hashPassword(password) : undefined;
+
+    const updatedUser = await userModel.findByIdAndUpdate(req.user._id, {
+      name: name || user.name,
+      email: email || user.email,
+      password: password || user.password,
+      address: address || user.address,
+      phone: phone || user.phone,
+    }, {new: true})
+
+    res.status(200).send({
+      success: true,
+      message: `User Profile updated`.bgGreen,
+      updatedUser,
+    })
+
+  }catch(error){
+    console.log(`Error in Catch: ${error}`.bgRed);
+    res.status(400).send({
+      success: false,
+      message: `Bad Request (updatePRofileController)`.bgRed,
       error,
     })
   }

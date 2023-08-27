@@ -6,6 +6,7 @@ import {
   forgotPasswordController,
 } from "../controllers/authController.js";
 import { isAdmin, requireSignIn } from "../middlewares/authMiddleware.js";
+import { updateProfileController } from "../controllers/productController.js";
 
 // route object
 const router = express.Router();
@@ -36,5 +37,8 @@ router.get("/admin-auth", requireSignIn, isAdmin, (req, res) => {
     ok: true,
   });
 });
+
+// update profile
+router.put('/profile', requireSignIn, updateProfileController);
 
 export default router;

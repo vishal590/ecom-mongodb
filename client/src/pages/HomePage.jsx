@@ -4,9 +4,12 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { Checkbox, Radio } from "antd";
 import { Prices } from "../components/Prices";
+import { useCart } from "../context/cart";
+import { toast } from "react-hot-toast";
 
 
 const HomePage = () => {
+  const [cart, setCart] = useCart();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [checked, setChecked] = useState([]);
@@ -160,12 +163,12 @@ const HomePage = () => {
           <h3>Products</h3>
           <div className="d-flex flex-wrap ">
             {products?.map((p) => (
-              <Link
-                to={`/dashboard/admin/product/${p.slug}`}
-                key={p._id}
-                className="product-link"
-              >
-                <div className="card m-2" style={{ width: "18rem" }}>
+              // <Link
+              //   to={`/dashboard/admin/product/${p.slug}`}
+              //   key={p._id}
+              //   className="product-link"
+              // >
+                <div className="card m-2" style={{ width: "18rem" }} key={p._id}>
                   <img
                     className="card-img-top"
                     src={`/api/v1/product/product-photo/${p._id}`}
@@ -180,12 +183,15 @@ const HomePage = () => {
                     <button className="btn btn-primary ms-1" onClick={() => navigate(`/product/${p.slug}`)}>
                       More Details
                     </button>
-                    <button className="btn btn-primary ms-1">
+                    <button className="btn btn-primary ms-1" onClick={() => {
+                      setCart([...cart, p]);
+                      localStorage.setItem('cart', JSON.stringify([...cart, p]))
+                      toast.success('item added to cart');
+                    }}>
                       Add to Cart
                     </button>
                   </div>
                 </div>
-              </Link>
             ))}
           </div>
           <div className="m-2 p-3">
