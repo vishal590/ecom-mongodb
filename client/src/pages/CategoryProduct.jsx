@@ -3,6 +3,8 @@ import Layout from '../components/Layout/Layout'
 import axios from 'axios';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/cart';
+import "../styles/CategoryProductStyles.css";
+
 
 const CategoryProduct = () => {
     const [products, setProducts] = useState([]);
